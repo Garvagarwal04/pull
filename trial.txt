@@ -1,0 +1,169 @@
+p2 
+
+mkdir program2
+cd program2
+mvn archetype:generate -DgroupId=com.example -DartifactId=myapp -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+cd myapp
+notepad pom.xml
+<?xml version="1.0″ encoding="UTF-8″?>
+<project xmlns="http://maven.apache.org/POM/4.0.0″
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>myapp</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <dependencies>
+        <!- JUnit Dependency for Testing ->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!- Maven Surefire Plugin for running tests ->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+                <configuration>
+                    <redirectTestOutputToFile>false</redirectTestOutputToFile>
+                    <useSystemOut>true</useSystemOut>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+-----------------------------------
+
+package com.example;
+
+public class App {
+
+    public int add(int a, int b) {
+        return a + b;
+    }
+
+    public static void main(String[] args) {
+        App app = new App();
+
+        int result = app.add(2, 3);
+        System.out.println("2 + 3 = " + result);
+
+        System.out.println("Application executed successfully!");
+    }
+}
+
+----------------------------------
+package com.example;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+public class AppTest {
+
+    @Test
+    public void testAdd() {
+        App app = new App();
+        int result = app.add(2, 3);
+
+        System.out.println("Running test: 2 + 3 = " + result);
+
+        Assert.assertEquals(5, result);
+    }
+}
+---------------------------
+mvn compile
+mvn test
+mvn package
+java -cp target/myapp-1.0-SNAPSHOT.jar com.example.App
+---------------------------------------------------------------------------------------
+
+
+p4
+mvn clean install
+mvn exec:java -Dexec.mainClass="com.example.App"
+gradle init
+plugins {
+    id 'java'
+}
+
+group = 'com.example'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.12'
+}
+
+task run(type: JavaExec) {
+    main = 'com.example.App'
+    classpath = sourceSets.main.runtimeClasspath
+}
+--------------
+gradlew build
+gradlew run
+-------------------------------------------------------------------------------------------
+p6
+pipeline { 
+agent any 
+stages { 
+stage('Build') { 
+steps { 
+echo 'Building Project... 
+} 
+} 
+stage('Test') { 
+steps { 
+echo 'Running Tests...' 
+} 
+} 
+stage('Deploy') { 
+steps { 
+echo 'Deploying Application...' 
+} 
+} 
+}}
+----------------------------------------------------------------------------------------
+p7
+wsl --install
+sudo apt update 
+sudo apt install ansible -y 
+mkdir ~/ansible-lab 
+cd ~/ansible-lab
+nano hosts
+[local] 
+localhost ansible_connection=local 
+--------
+ansible -i hosts local -m ping 
+nano install_nginx.yml
+--- - name: Install and start NGINX 
+  hosts: local 
+  become: yes 
+  tasks: 
+    - name: Install nginx 
+      apt: 
+        name: nginx 
+        state: present 
+        update_cache: yes 
+    - name: Start nginx service 
+      service: 
+        name: nginx 
+        state: started 
+        enabled: yes 
+-------------------------- 
+ansible-playbook -i hosts install_nginx.yml 
+curl http://localhost 
+
+
+
+
